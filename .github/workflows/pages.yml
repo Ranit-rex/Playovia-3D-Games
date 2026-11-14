@@ -21,12 +21,21 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Install matching Godot export templates
+        run: |
+          mkdir -p /tmp/godot-templates "$HOME/.local/share/godot/export_templates/4.4.1.stable"
+          wget -q https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_export_templates.tpz -O /tmp/godot-templates/templates.tpz
+          unzip -q /tmp/godot-templates/templates.tpz -d /tmp/godot-templates/unpacked
+          cp -a /tmp/godot-templates/unpacked/templates/. "$HOME/.local/share/godot/export_templates/4.4.1.stable/"
+      - name: Import and validate project
+        run: godot --headless --path godot --editor --quit
       - name: Export Godot Web
         run: |
           mkdir -p build
-          godot --headless --path godot --editor --quit
           godot --headless --path godot --export-release "Web" build/index.html
-      - uses: actions/upload-pages-artifact@v3
+          test -s build/index.html
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: build
       - name: Deploy
