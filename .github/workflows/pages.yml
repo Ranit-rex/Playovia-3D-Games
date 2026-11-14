@@ -31,13 +31,13 @@ jobs:
         run: godot --headless --path godot --editor --quit
       - name: Export Godot Web
         run: |
-          mkdir -p build
+          mkdir -p godot/build
           godot --headless --path godot --export-release "Web" build/index.html
-          test -s build/index.html
+          test -s godot/build/index.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: godot/build
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
